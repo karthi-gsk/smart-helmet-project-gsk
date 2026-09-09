@@ -1,4 +1,5 @@
-const rawBase = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8080';
+const defaultHost = typeof window !== 'undefined' && window.location.hostname ? window.location.hostname : '127.0.0.1';
+const rawBase = import.meta.env.VITE_API_BASE_URL || `http://${defaultHost}:8080`;
 const cleanBase = rawBase.replace(/\/+$/, '');
 const API_BASE_URL = cleanBase.endsWith('/api') ? cleanBase : `${cleanBase}/api`;
 

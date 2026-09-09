@@ -1,5 +1,6 @@
 import React from 'react';
 import { HardHat, ShieldAlert, Cpu, HeartPulse, ShieldCheck, MapPin, Radio, AlertTriangle, Users, GraduationCap, ChevronDown, ArrowDown, Wifi, Brain, LayoutDashboard, Bell, Server } from 'lucide-react';
+import BrandPowered from '../components/BrandPowered';
 
 function Home({ setActiveTab }) {
   return (
@@ -20,6 +21,9 @@ function Home({ setActiveTab }) {
         <div className="hero-text">
           <span className="project-tag">IoT & Machine Learning Integration</span>
           <h2 className="hero-title">AI-Powered Smart Helmet</h2>
+          <div className="hero-brand-subtitle">
+            <BrandPowered emphasis={true} className="hero-brand-powered" />
+          </div>
           <p className="hero-abstract">
             An intelligent safety system that active-monitors motorcycle riders using integrated helmet sensors. By leveraging a Random Forest Machine Learning model, the helmet dynamically predicts accidents, detects rider impairment (alcohol/drowsiness), and dispatches automated emergency alerts via GSM/GPS in real-time.
           </p>

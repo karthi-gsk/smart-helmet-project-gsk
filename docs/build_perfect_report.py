@@ -38,15 +38,15 @@ def scan_pdf_for_pages():
     ch1_idx = None
     for idx, page in enumerate(reader.pages):
         text = page.extract_text()
-        if "CHAPTER 1: INTRODUCTION" in text:
+        if "CHAPTER 1" in text and "INTRODUCTION" in text and "TABLE OF CONTENTS" not in text:
             ch1_idx = idx
             break
             
     if ch1_idx is None:
-        print("[WARN] Could not find 'CHAPTER 1: INTRODUCTION' in PDF text. Defaulting to index 8.")
+        print("[WARN] Could not find 'CHAPTER 1' in PDF text. Defaulting to index 8.")
         ch1_idx = 8
     else:
-        print(f"[INFO] 'CHAPTER 1: INTRODUCTION' starts on PDF page index: {ch1_idx} (Page {ch1_idx + 1})")
+        print(f"[INFO] 'CHAPTER 1' starts on PDF page index: {ch1_idx} (Page {ch1_idx + 1})")
         
     title_idx = 0
     
@@ -90,41 +90,42 @@ def scan_pdf_for_pages():
     
     # 1. TOC Mappings
     toc_mappings = {
-        "Certificate": "CERTIFICATE",
-        "Acknowledgement": "ACKNOWLEDGEMENT",
-        "Abstract": "ABSTRACT",
-        "Table of Contents": "TABLE OF CONTENTS",
-        "List of Figures": "LIST OF FIGURES",
-        "List of Tables": "LIST OF TABLES",
-        "Chapter 1: Introduction": "CHAPTER 1: INTRODUCTION",
-        "Chapter 2: Problem Definition": "CHAPTER 2: PROBLEM DEFINITION",
-        "Chapter 3: Objective of the Project": "CHAPTER 3: OBJECTIVE OF THE PROJECT",
-        "Chapter 4: Literature Survey": "CHAPTER 4: LITERATURE SURVEY",
-        "Chapter 5: Requirement Analysis": "CHAPTER 5: REQUIREMENT ANALYSIS",
-        "Chapter 6: System Design": "CHAPTER 6: SYSTEM DESIGN",
-        "Chapter 7: Implementation": "CHAPTER 7: IMPLEMENTATION",
-        "Chapter 8: Modules Description": "CHAPTER 8: MODULES DESCRIPTION",
-        "Chapter 9: Output and Screenshots": "CHAPTER 9: OUTPUT AND SCREENSHOTS",
-        "Chapter 10: Testing": "CHAPTER 10: TESTING",
-        "Chapter 11: Advantages and Applications": "CHAPTER 11: ADVANTAGES AND APPLICATIONS",
-        "Chapter 12: Limitations": "CHAPTER 12: LIMITATIONS",
-        "Chapter 13: Future Scope": "CHAPTER 13: FUTURE SCOPE",
-        "Chapter 14: Conclusion": "CHAPTER 14: CONCLUSION",
-        "Chapter 15: References / Bibliography": "CHAPTER 15: REFERENCES",
-        "Appendix A: Backend API Details": "APPENDIX A: BACKEND API DETAILS",
-        "Appendix B: Important Code Snippets": "APPENDIX B: IMPORTANT CODE SNIPPETS",
-        "Appendix C: Run Commands": "APPENDIX C: RUN COMMANDS",
-        "Appendix D: Demo Flow": "APPENDIX D: DEMO FLOW",
-        "Appendix E: Hardware Components List": "APPENDIX E: HARDWARE COMPONENTS LIST",
+        "Certificate": ["BONAFIDE CERTIFICATE"],
+        "Declaration": ["DECLARATION"],
+        "Acknowledgement": ["ACKNOWLEDGEMENT"],
+        "Table of Contents": ["TABLE OF CONTENTS"],
+        "List of Figures": ["LIST OF FIGURES"],
+        "List of Tables": ["LIST OF TABLES"],
+        "Abstract": ["ABSTRACT"],
+        "Chapter 1: Introduction": ["CHAPTER 1", "INTRODUCTION"],
+        "Chapter 2: Problem Definition": ["CHAPTER 2", "PROBLEM DEFINITION"],
+        "Chapter 3: Objective of the Project": ["CHAPTER 3", "OBJECTIVE OF THE PROJECT"],
+        "Chapter 4: Literature Survey": ["CHAPTER 4", "LITERATURE SURVEY"],
+        "Chapter 5: Requirement Analysis": ["CHAPTER 5", "REQUIREMENT ANALYSIS"],
+        "Chapter 6: System Design": ["CHAPTER 6", "SYSTEM DESIGN"],
+        "Chapter 7: Implementation": ["CHAPTER 7", "IMPLEMENTATION"],
+        "Chapter 8: Modules Description": ["CHAPTER 8", "MODULES DESCRIPTION"],
+        "Chapter 9: Output and Screenshots": ["CHAPTER 9", "OUTPUT AND SCREENSHOTS"],
+        "Chapter 10: Testing": ["CHAPTER 10", "TESTING"],
+        "Chapter 11: Advantages and Applications": ["CHAPTER 11", "ADVANTAGES AND APPLICATIONS"],
+        "Chapter 12: Limitations": ["CHAPTER 12", "LIMITATIONS"],
+        "Chapter 13: Future Scope": ["CHAPTER 13", "FUTURE SCOPE"],
+        "Chapter 14: Conclusion": ["CHAPTER 14", "CONCLUSION"],
+        "Chapter 15: References / Bibliography": ["CHAPTER 15", "REFERENCES"],
+        "Appendix A: Backend API Details": ["APPENDIX A", "BACKEND API DETAILS"],
+        "Appendix B: Important Code Snippets": ["APPENDIX B", "IMPORTANT CODE SNIPPETS"],
+        "Appendix C: Run Commands": ["APPENDIX C", "RUN COMMANDS"],
+        "Appendix D: Demo Flow": ["APPENDIX D", "DEMO FLOW"],
+        "Appendix E: Hardware Components List": ["APPENDIX E", "HARDWARE COMPONENTS LIST"],
     }
     
-    for key, search_term in toc_mappings.items():
+    for key, terms in toc_mappings.items():
         found_idx = None
         for idx, page in enumerate(reader.pages):
             if idx == toc_idx and key != "Table of Contents":
                 continue
             text = page.extract_text()
-            if search_term in text:
+            if all(t in text for t in terms):
                 found_idx = idx
                 break
         if found_idx is not None:
@@ -265,10 +266,21 @@ def main():
     # Check Table 2 is not orphaned
     ch1_idx = None
     for idx, page in enumerate(reader.pages):
-        if "CHAPTER 1: INTRODUCTION" in page.extract_text():
+        t = page.extract_text()
+        if "CHAPTER 1" in t and "INTRODUCTION" in t and "TABLE OF CONTENTS" not in t:
             ch1_idx = idx
             break
+    # Find List of Tables page to avoid false positive in Table 2 check
+    lot_idx = None
     for idx, page in enumerate(reader.pages):
+        text = page.extract_text()
+        if "LIST OF TABLES" in text and "Comparison of Existing" in text:
+            lot_idx = idx
+            break
+
+    for idx, page in enumerate(reader.pages):
+        if idx == lot_idx:
+            continue
         t = page.extract_text()
         if "Table 2: Functional Requirements" in t:
             lines = [ln.strip() for ln in t.split("\n") if ln.strip()]

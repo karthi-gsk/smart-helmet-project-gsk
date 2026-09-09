@@ -97,26 +97,95 @@ button {
   box-shadow: 10px 0 30px rgba(0, 0, 0, 0.6);
 }
 
+/* Core Creator & Brand Identity — GSK AI */
+.brand-powered-badge {
+  display: inline-flex;
+  align-items: baseline;
+  font-family: var(--font-main);
+  line-height: 1;
+}
+
+.brand-prefix {
+  color: var(--text-secondary);
+  margin-right: 0.25rem;
+}
+
+.brand-gsk {
+  color: var(--soft-gold);
+  font-weight: 700;
+  letter-spacing: 0.8px;
+}
+
+.brand-gsk-emphasis {
+  color: #ffffff;
+  background: linear-gradient(135deg, #ffffff 0%, var(--soft-gold) 60%, var(--metallic-gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.4));
+}
+
+.brand-ai {
+  color: var(--crimson-red);
+  font-size: 0.58em;
+  font-weight: 800;
+  vertical-align: super;
+  line-height: 0;
+  margin-left: 1.5px;
+  letter-spacing: 0.5px;
+  filter: drop-shadow(0 0 6px rgba(215, 25, 32, 0.5));
+}
+
 .sidebar-brand {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  margin-bottom: 3.5rem;
+  margin-bottom: 3rem;
 }
 
 .brand-icon {
   color: var(--crimson-red);
   filter: drop-shadow(0 0 10px rgba(215, 25, 32, 0.5));
+  flex-shrink: 0;
+}
+
+.brand-text-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
 }
 
 .brand-text {
   font-family: var(--font-title);
   font-weight: 800;
-  font-size: 1.35rem;
+  font-size: 1.3rem;
   letter-spacing: 0.5px;
+  line-height: 1.1;
   background: linear-gradient(135deg, #ffffff 30%, var(--soft-gold) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+.sidebar-brand-powered {
+  font-size: 0.65rem;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.sidebar-brand-powered .brand-prefix {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.sidebar-brand-powered .brand-gsk {
+  color: var(--soft-gold);
+  font-weight: 700;
+}
+
+.sidebar-brand-powered .brand-ai {
+  color: var(--crimson-red);
+  font-size: 0.58em;
 }
 
 .sidebar-nav {
@@ -173,22 +242,37 @@ button {
 
 .sidebar-footer {
   border-top: 1px solid var(--border-color);
-  padding-top: 1.75rem;
+  padding-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.sidebar-footer-brand {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  margin-bottom: 0.2rem;
+  letter-spacing: 0.4px;
+}
+
+.sidebar-footer-brand .brand-powered-badge {
+  font-size: 0.68rem;
 }
 
 .college-text {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 700;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 1.5px;
-  margin-bottom: 0.35rem;
+  letter-spacing: 1.2px;
+  margin-bottom: 0.15rem;
 }
 
 .version-text {
-  font-size: 0.68rem;
+  font-size: 0.66rem;
   color: var(--text-muted);
-  opacity: 0.85;
+  opacity: 0.8;
 }
 
 /* Main Content Area */
@@ -217,6 +301,13 @@ button {
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
 }
 
+.header-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
 .header-info h1 {
   font-family: var(--font-title);
   font-weight: 800;
@@ -226,6 +317,25 @@ button {
   background: linear-gradient(to right, #ffffff 60%, var(--soft-gold) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  line-height: 1.2;
+}
+
+.header-brand-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  padding: 0.2rem 0.65rem;
+  border-radius: 20px;
+  letter-spacing: 0.4px;
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.06);
+  white-space: nowrap;
+}
+
+.header-brand-badge .brand-prefix {
+  color: var(--text-secondary);
+  opacity: 0.85;
 }
 
 .header-subtitle {
@@ -234,6 +344,7 @@ button {
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.8px;
+  margin-top: 0.15rem;
 }
 
 .header-badge {
@@ -328,11 +439,34 @@ button {
   font-size: 3.2rem;
   font-weight: 900;
   line-height: 1.15;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.85rem;
   letter-spacing: -0.5px;
   background: linear-gradient(to right, #ffffff 40%, var(--soft-gold) 75%, var(--crimson-red) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+.hero-brand-subtitle {
+  margin-bottom: 1.6rem;
+  display: flex;
+  align-items: center;
+}
+
+.hero-brand-powered {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  letter-spacing: 0.6px;
+  background: rgba(212, 175, 55, 0.05);
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  padding: 0.35rem 0.95rem;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.hero-brand-powered .brand-prefix {
+  color: var(--text-secondary);
+  opacity: 0.9;
 }
 
 .hero-abstract {
@@ -1887,4 +2021,127 @@ button {
   letter-spacing: 1px;
   margin-bottom: 0.75rem;
   font-weight: 700;
+}
+
+/* ==========================================================================
+   Main Content Footer & Responsive Branding Design
+   ========================================================================== */
+.main-footer {
+  margin-top: auto;
+  border-top: 1px solid var(--border-color);
+  background: rgba(8, 8, 10, 0.85);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  padding: 1.8rem 3rem;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  text-align: center;
+}
+
+.footer-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.footer-meta {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.footer-brand-powered {
+  font-size: 0.85rem;
+}
+
+/* Responsive Media Queries */
+@media (max-width: 1100px) {
+  .hero-section {
+    gap: 2.5rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .main-header {
+    padding: 1rem 1.5rem;
+    height: auto;
+    min-height: 80px;
+  }
+  .header-title-row {
+    gap: 0.6rem;
+  }
+  .main-footer {
+    padding: 1.5rem 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-container {
+    flex-direction: column;
+  }
+  .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+    padding: 1.5rem 1.25rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  }
+  .sidebar-brand {
+    margin-bottom: 1.25rem;
+  }
+  .sidebar-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .nav-item {
+    padding: 0.6rem 0.9rem;
+    font-size: 0.82rem;
+  }
+  .sidebar-footer {
+    display: none;
+  }
+  .main-content {
+    margin-left: 0;
+  }
+  .main-header {
+    padding: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
+  }
+  .header-title-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
+  .page-wrapper {
+    padding: 1.5rem 1rem;
+  }
+  .hero-section {
+    flex-direction: column;
+    gap: 2rem;
+  }
+  .hero-title {
+    font-size: 2.2rem;
+  }
+  .main-footer {
+    padding: 1.5rem 1rem;
+  }
 }

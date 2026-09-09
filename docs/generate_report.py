@@ -28,23 +28,61 @@ from docx import Document
 from docx.shared import Inches, Pt, Cm, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_TAB_ALIGNMENT, WD_TAB_LEADER
 from docx.enum.table import WD_TABLE_ALIGNMENT
-from docx.oxml import parse_xml
-from docx.oxml.ns import nsdecls
+from docx.oxml import parse_xml, OxmlElement
+from docx.oxml.ns import nsdecls, qn
+from docx.enum.section import WD_SECTION_START
 
 
 def add_page_border(section):
+    # Remove any existing pgBorders to prevent duplicates
+    existing = section._sectPr.findall(qn('w:pgBorders'))
+    for e in existing:
+        section._sectPr.remove(e)
     xml_str = (
         f'<w:pgBorders {nsdecls("w")} w:offsetFrom="page">'
-        f'<w:top w:val="single" w:sz="8" w:space="24" w:color="000000"/>'
-        f'<w:left w:val="single" w:sz="8" w:space="24" w:color="000000"/>'
-        f'<w:bottom w:val="single" w:sz="8" w:space="24" w:color="000000"/>'
-        f'<w:right w:val="single" w:sz="8" w:space="24" w:color="000000"/>'
+        f'<w:top w:val="single" w:sz="4" w:space="24" w:color="000000"/>'
+        f'<w:left w:val="single" w:sz="4" w:space="24" w:color="000000"/>'
+        f'<w:bottom w:val="single" w:sz="4" w:space="24" w:color="000000"/>'
+        f'<w:right w:val="single" w:sz="4" w:space="24" w:color="000000"/>'
         f'</w:pgBorders>'
     )
     section._sectPr.append(parse_xml(xml_str))
-from docx.enum.section import WD_SECTION_START
-from docx.oxml.ns import qn, nsdecls
-from docx.oxml import parse_xml, OxmlElement
+
+
+def add_form_number(doc):
+    """Add the college form number right-aligned at top of page."""
+    p = doc.add_paragraph()
+    p.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    p.paragraph_format.space_before = Pt(0)
+    p.paragraph_format.space_after = Pt(6)
+    run = p.add_run("FORM NO. F/ TL / 024 Rev.00 Date 20.03.2020")
+    run.font.size = Pt(10)
+    run.font.name = "Times New Roman"
+    return p
+
+
+def add_split_chapter_heading(doc, chapter_label, chapter_title):
+    """Add chapter heading in college sample format: 'CHAPTER X' on one line, 'TITLE' on next."""
+    p1 = doc.add_paragraph()
+    p1.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p1.paragraph_format.space_before = Pt(24)
+    p1.paragraph_format.space_after = Pt(6)
+    p1.paragraph_format.keep_with_next = True
+    run1 = p1.add_run(chapter_label.upper())
+    run1.bold = True
+    run1.font.size = Pt(14)
+    run1.font.name = "Times New Roman"
+
+    p2 = doc.add_paragraph()
+    p2.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p2.paragraph_format.space_before = Pt(6)
+    p2.paragraph_format.space_after = Pt(18)
+    p2.paragraph_format.keep_with_next = True
+    run2 = p2.add_run(chapter_title.upper())
+    run2.bold = True
+    run2.font.size = Pt(14)
+    run2.font.name = "Times New Roman"
+    return p1, p2
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 ASSETS_DIR = os.path.join(SCRIPT_DIR, "report_assets")
@@ -378,9 +416,6 @@ def build_report(page_map=None):
     fmt.space_after = Pt(6)
 
     # ──────────────────────────────
-    #  SECTION 1: COVER / TITLE PAGE (No Page Number)
-    # ──────────────────────────────
-    # ──────────────────────────────
     #  SECTION 1: COVER / TITLE PAGE (No Page Number, Page Border ON)
     # ──────────────────────────────
     sec1 = doc.sections[0]
@@ -388,101 +423,153 @@ def build_report(page_map=None):
     sec1.page_height = Cm(29.7)
     sec1.page_width = Cm(21.0)
     add_page_border(sec1)
-    
+
     # Ensure cover footer is empty and unlinked
     footer1 = sec1.footer
     footer1.is_linked_to_previous = False
     for p in footer1.paragraphs:
         p.text = ""
 
-    # University Heading First at Top
-    p_u1 = doc.add_paragraph()
-    p_u1.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p_u1.paragraph_format.space_before = Pt(24)
-    p_u1.paragraph_format.space_after = Pt(2)
-    run_u1 = p_u1.add_run("Dr. M.G.R.\nEducational and Research Institute\n(Deemed to be University)")
-    run_u1.bold = True
-    run_u1.font.size = Pt(15)
-    run_u1.font.name = "Times New Roman"
+    # Form Number at Top Right
+    add_form_number(doc)
 
-    p_sub1 = doc.add_paragraph()
-    p_sub1.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p_sub1.paragraph_format.space_after = Pt(28)
-    run_sub1 = p_sub1.add_run("(Declared under Section 3 of UGC Act 1956)")
-    run_sub1.italic = True
-    run_sub1.font.size = Pt(10)
-    run_sub1.font.name = "Times New Roman"
+    # DEPARTMENT OF heading block (centered, spaced lines)
+    p_dept_label = doc.add_paragraph()
+    p_dept_label.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p_dept_label.paragraph_format.space_before = Pt(24)
+    p_dept_label.paragraph_format.space_after = Pt(6)
+    run_dl = p_dept_label.add_run("DEPARTMENT")
+    run_dl.bold = True
+    run_dl.font.size = Pt(14)
+    run_dl.font.name = "Times New Roman"
+
+    p_of = doc.add_paragraph()
+    p_of.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p_of.paragraph_format.space_before = Pt(6)
+    p_of.paragraph_format.space_after = Pt(6)
+    run_of = p_of.add_run("OF")
+    run_of.bold = True
+    run_of.font.size = Pt(14)
+    run_of.font.name = "Times New Roman"
+
+    p_dept_name = doc.add_paragraph()
+    p_dept_name.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p_dept_name.paragraph_format.space_before = Pt(6)
+    p_dept_name.paragraph_format.space_after = Pt(36)
+    run_dn = p_dept_name.add_run("COMPUTER SCIENCE AND ENGINEERING (AI & DS)")
+    run_dn.bold = True
+    run_dn.font.size = Pt(14)
+    run_dn.font.name = "Times New Roman"
 
     # Project Title
     p_title = doc.add_paragraph()
     p_title.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p_title.paragraph_format.space_after = Pt(28)
+    p_title.paragraph_format.space_before = Pt(12)
+    p_title.paragraph_format.space_after = Pt(36)
     p_title.paragraph_format.line_spacing = 1.25
     run_title = p_title.add_run("AI-POWERED SMART HELMET\nWITH ACCIDENT PREDICTION AND\nEMERGENCY ALERT SYSTEM")
     run_title.bold = True
     run_title.font.size = Pt(17)
     run_title.font.name = "Times New Roman"
 
-    # Mini Project Report Designation
-    p_rep = doc.add_paragraph()
-    p_rep.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p_rep.paragraph_format.space_after = Pt(4)
-    run_rep = p_rep.add_run("A MINI PROJECT REPORT")
-    run_rep.bold = True
-    run_rep.font.size = Pt(13)
-    run_rep.font.name = "Times New Roman"
+    # MINI PROJECT
+    p_mp = doc.add_paragraph()
+    p_mp.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p_mp.paragraph_format.space_before = Pt(12)
+    p_mp.paragraph_format.space_after = Pt(4)
+    run_mp = p_mp.add_run("MINI PROJECT")
+    run_mp.bold = True
+    run_mp.font.size = Pt(13)
+    run_mp.font.name = "Times New Roman"
 
-    p_subm = doc.add_paragraph()
-    p_subm.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p_subm.paragraph_format.space_after = Pt(16)
-    run_subm = p_subm.add_run("Submitted in partial fulfillment of the requirements\nfor the award of the degree of")
-    run_subm.font.size = Pt(11)
-    run_subm.font.name = "Times New Roman"
+    # submitted in partial fulfilment...
+    p_sub1 = doc.add_paragraph()
+    p_sub1.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p_sub1.paragraph_format.space_before = Pt(2)
+    p_sub1.paragraph_format.space_after = Pt(2)
+    run_s1 = p_sub1.add_run("submitted in partial fulfilment of the")
+    run_s1.font.size = Pt(12)
+    run_s1.font.name = "Times New Roman"
 
-    # Degree Wording
-    p_deg = doc.add_paragraph()
-    p_deg.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p_deg.paragraph_format.space_after = Pt(16)
-    p_deg.paragraph_format.line_spacing = 1.25
-    run_deg = p_deg.add_run("Bachelor of Technology\nin\nComputer Science and Engineering (Artificial Intelligence and Data Science)")
-    run_deg.bold = True
-    run_deg.font.size = Pt(12)
-    run_deg.font.name = "Times New Roman"
+    p_sub2 = doc.add_paragraph()
+    p_sub2.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p_sub2.paragraph_format.space_before = Pt(2)
+    p_sub2.paragraph_format.space_after = Pt(24)
+    run_s2 = p_sub2.add_run("requirements for the award of the degree in")
+    run_s2.font.size = Pt(12)
+    run_s2.font.name = "Times New Roman"
 
-    # Department Line
-    p_dept = doc.add_paragraph()
-    p_dept.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p_dept.paragraph_format.space_after = Pt(24)
-    run_dept = p_dept.add_run("Department of Computer Science and Engineering (AI & DS)")
-    run_dept.bold = True
-    run_dept.font.size = Pt(12)
-    run_dept.font.name = "Times New Roman"
+    # BACHELOR OF TECHNOLOGY
+    p_deg1 = doc.add_paragraph()
+    p_deg1.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p_deg1.paragraph_format.space_before = Pt(12)
+    p_deg1.paragraph_format.space_after = Pt(2)
+    run_deg1 = p_deg1.add_run("BACHELOR OF TECHNOLOGY")
+    run_deg1.bold = True
+    run_deg1.font.size = Pt(14)
+    run_deg1.font.name = "Times New Roman"
 
-    # Submitted By Block
-    p_by = doc.add_paragraph()
-    p_by.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p_by.paragraph_format.space_after = Pt(4)
-    run_by = p_by.add_run("Submitted by:")
-    run_by.font.size = Pt(11)
-    run_by.font.name = "Times New Roman"
+    p_deg2 = doc.add_paragraph()
+    p_deg2.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p_deg2.paragraph_format.space_before = Pt(2)
+    p_deg2.paragraph_format.space_after = Pt(24)
+    run_deg2 = p_deg2.add_run("IN COMPUTER SCIENCE AND ENGINEERING (AI & DS)")
+    run_deg2.bold = True
+    run_deg2.font.size = Pt(14)
+    run_deg2.font.name = "Times New Roman"
 
-    for name in ["KARTHICK S", "MIDHUN SATHISHKUMAR", "KAMESH KUMAR J"]:
+    # Team member names and register numbers
+    student_details = [
+        ("KARTHICK S", "231191101297"),
+        ("MIDHUN SATHISHKUMAR", "Reg. No: __________"),
+        ("KAMESH KUMAR J", "Reg. No: __________")
+    ]
+    for name, reg in student_details:
         p_name = doc.add_paragraph()
         p_name.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        p_name.paragraph_format.space_after = Pt(3)
+        p_name.paragraph_format.space_before = Pt(4)
+        p_name.paragraph_format.space_after = Pt(1)
         run_n = p_name.add_run(name)
         run_n.bold = True
         run_n.font.size = Pt(12)
         run_n.font.name = "Times New Roman"
+        
+        p_reg = doc.add_paragraph()
+        p_reg.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p_reg.paragraph_format.space_before = Pt(0)
+        p_reg.paragraph_format.space_after = Pt(6)
+        run_reg = p_reg.add_run(reg)
+        run_reg.bold = True
+        run_reg.font.size = Pt(11)
+        run_reg.font.name = "Times New Roman"
 
-    # Academic Year
-    p_year = doc.add_paragraph()
-    p_year.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p_year.paragraph_format.space_before = Pt(28)
-    run_yr = p_year.add_run("Academic Year: 2025 - 2026")
-    run_yr.bold = True
-    run_yr.font.size = Pt(12)
-    run_yr.font.name = "Times New Roman"
+    # By
+    p_by = doc.add_paragraph()
+    p_by.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p_by.paragraph_format.space_before = Pt(12)
+    p_by.paragraph_format.space_after = Pt(10)
+    run_by = p_by.add_run("By")
+    run_by.font.size = Pt(12)
+    run_by.font.name = "Times New Roman"
+
+    # JULY 2026
+    p_month = doc.add_paragraph()
+    p_month.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p_month.paragraph_format.space_before = Pt(12)
+    p_month.paragraph_format.space_after = Pt(24)
+    run_month = p_month.add_run("JULY 2026")
+    run_month.bold = True
+    run_month.font.size = Pt(13)
+    run_month.font.name = "Times New Roman"
+
+    # Bottom right revision info
+    p_rev_bottom = doc.add_paragraph()
+    p_rev_bottom.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    p_rev_bottom.paragraph_format.space_before = Pt(8)
+    p_rev_bottom.paragraph_format.space_after = Pt(0)
+    run_rev_bottom = p_rev_bottom.add_run("Rev.00 Date 20.03.2020")
+    run_rev_bottom.font.size = Pt(10)
+    run_rev_bottom.font.name = "Times New Roman"
 
     # ──────────────────────────────
     #  SECTION 2: CERTIFICATE PAGE (Page Border ON, Roman Numerals: ii)
@@ -493,147 +580,313 @@ def build_report(page_map=None):
     add_page_number_to_footer(sec2)
     set_section_page_numbering(sec2, fmt="lowerRoman", start=2)  # Certificate is ii
 
-    # University Heading First on Certificate Page
-    p_u2 = doc.add_paragraph()
-    p_u2.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p_u2.paragraph_format.space_before = Pt(0)
-    p_u2.paragraph_format.space_after = Pt(2)
-    run_u2 = p_u2.add_run("Dr. M.G.R.\nEDUCATIONAL AND RESEARCH INSTITUTE\n(Deemed to be University)")
-    run_u2.bold = True
-    run_u2.font.size = Pt(14)
-    run_u2.font.name = "Times New Roman"
+    # Rev.00 at top
+    p_rev = doc.add_paragraph()
+    p_rev.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    p_rev.paragraph_format.space_before = Pt(0)
+    p_rev.paragraph_format.space_after = Pt(6)
+    run_rev = p_rev.add_run("Rev.00 Date 20.03.2020")
+    run_rev.font.size = Pt(10)
+    run_rev.font.name = "Times New Roman"
 
+    # Department Heading
     p_dept2 = doc.add_paragraph()
     p_dept2.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p_dept2.paragraph_format.space_after = Pt(14)
-    run_d2 = p_dept2.add_run("Department of Computer Science and Engineering (AI & DS)")
+    p_dept2.paragraph_format.space_before = Pt(36)
+    p_dept2.paragraph_format.space_after = Pt(6)
+    run_d2 = p_dept2.add_run("DEPARTMENT OF COMPUTER SCIENCE AND ENGINEERING (AI & DS)")
     run_d2.bold = True
-    run_d2.font.size = Pt(12)
+    run_d2.font.size = Pt(14)
     run_d2.font.name = "Times New Roman"
 
     # Bonafide Certificate Heading
     p_cert = doc.add_paragraph()
     p_cert.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p_cert.paragraph_format.space_after = Pt(14)
+    p_cert.paragraph_format.space_before = Pt(6)
+    p_cert.paragraph_format.space_after = Pt(24)
     run_c = p_cert.add_run("BONAFIDE CERTIFICATE")
     run_c.bold = True
     run_c.font.size = Pt(15)
     run_c.font.name = "Times New Roman"
 
-    # Body
-    add_body(doc,
-        'This is to certify that the Mini Project entitled "AI-POWERED SMART HELMET WITH '
-        'ACCIDENT PREDICTION AND EMERGENCY ALERT SYSTEM" is a bonafide work carried out by '
-        'Karthick S, Midhun Sathishkumar, and Kamesh Kumar J in partial fulfillment of the '
-        'requirements for the award of the degree of Bachelor of Technology in Computer Science '
-        'and Engineering (Artificial Intelligence and Data Science) from Dr. M.G.R. Educational and '
-        'Research Institute during the academic year 2025 - 2026.')
+    # Certificate Body (justified, matching user-specified text)
+    p_cert_body = doc.add_paragraph()
+    p_cert_body.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    p_cert_body.paragraph_format.space_before = Pt(12)
+    p_cert_body.paragraph_format.space_after = Pt(24)
+    p_cert_body.paragraph_format.line_spacing = 1.5
+    p_cert_body.paragraph_format.first_line_indent = Cm(1.27)
+    run_cb = p_cert_body.add_run(
+        'This is to certify that this Project Report is the bonafide work of '
+        'Mr. KARTHICK S, Mr. MIDHUN SATHISHKUMAR, and Mr. KAMESH KUMAR J, '
+        'who carried out the project entitled '
+        '\u201cAI-POWERED SMART HELMET WITH ACCIDENT PREDICTION AND EMERGENCY ALERT SYSTEM\u201d '
+        'under our supervision during the academic year 2025 - 2026.')
+    run_cb.font.size = Pt(12)
+    run_cb.font.name = "Times New Roman"
 
-    for _ in range(2):
-        doc.add_paragraph()
 
-    table = doc.add_table(rows=3, cols=2)
-    table.alignment = WD_TABLE_ALIGNMENT.CENTER
-    labels = [
-        ("Internal Guide", "Head of Department"),
-        ("Name: ___________________", "Name: ___________________"),
-        ("Signature: _______________", "Signature: _______________"),
+
+    # 3-column signature table matching user layout
+    sig_table = doc.add_table(rows=3, cols=3)
+    sig_table.alignment = WD_TABLE_ALIGNMENT.CENTER
+    sig_labels = [
+        ("PROJECT COORDINATOR", "PROJECT COORDINATOR / GUIDE", "HOD"),
+        ("Name: ___________________", "Name: ___________________", "Name: ___________________"),
+        ("Signature: _______________", "Signature: _______________", "Signature: _______________")
     ]
-    for r, (l, r_text) in enumerate(labels):
-        for c, txt in enumerate([l, r_text]):
-            cell = table.rows[r].cells[c]
+    
+    for r_idx, row_data in enumerate(sig_labels):
+        for c_idx, txt in enumerate(row_data):
+            cell = sig_table.rows[r_idx].cells[c_idx]
             cell.text = ""
             p = cell.paragraphs[0]
+            p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            
+            # Formatting and spacing inside cell
+            p.paragraph_format.line_spacing = 1.15
+            if r_idx == 0:
+                p.paragraph_format.space_before = Pt(6)
+                p.paragraph_format.space_after = Pt(24)  # Generous space before Name
+            elif r_idx == 1:
+                p.paragraph_format.space_before = Pt(6)
+                p.paragraph_format.space_after = Pt(18)  # Space before Signature
+            else:
+                p.paragraph_format.space_before = Pt(6)
+                p.paragraph_format.space_after = Pt(6)
+                
             run = p.add_run(txt)
-            run.font.size = Pt(12)
             run.font.name = "Times New Roman"
-            if r == 0:
+            run.font.size = Pt(11)
+            if r_idx == 0:
                 run.bold = True
 
-    # ──────────────────────────────
-    #  SECTION 3: OTHER PRELIMINARY PAGES (No Border, Roman Numerals: iii, iv, v, vi, vii)
-    # ──────────────────────────────
-    sec3 = doc.add_section(WD_SECTION_START.NEW_PAGE)
-    set_margins(sec3)
-    add_page_number_to_footer(sec3)
-    set_section_page_numbering(sec3, fmt="lowerRoman", start=3)
+    # Remove table borders for signature table
+    for row in sig_table.rows:
+        for cell in row.cells:
+            tc = cell._tc
+            tcPr = tc.get_or_add_tcPr()
+            borders_xml = parse_xml(
+                f'<w:tcBorders {nsdecls("w")}>'
+                f'<w:top w:val="none" w:sz="0" w:space="0" w:color="auto"/>'
+                f'<w:left w:val="none" w:sz="0" w:space="0" w:color="auto"/>'
+                f'<w:bottom w:val="none" w:sz="0" w:space="0" w:color="auto"/>'
+                f'<w:right w:val="none" w:sz="0" w:space="0" w:color="auto"/>'
+                f'</w:tcBorders>'
+            )
+            tcPr.append(borders_xml)
 
-    # Acknowledgement
-    add_chapter_heading(doc, "Acknowledgement")
-    add_body(doc,
+    # Submitted for Viva Voce
+    p_viva = doc.add_paragraph()
+    p_viva.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p_viva.paragraph_format.space_before = Pt(36)
+    p_viva.paragraph_format.space_after = Pt(24)
+    run_viva = p_viva.add_run("Submitted for Viva Voce Examination held on -------------------------")
+    run_viva.bold = True
+    run_viva.font.size = Pt(12)
+    run_viva.font.name = "Times New Roman"
+
+    # Internal Examiner / External Examiner
+    p_exam = doc.add_paragraph()
+    p_exam.paragraph_format.space_before = Pt(36)
+    p_exam.paragraph_format.space_after = Pt(6)
+    p_exam.paragraph_format.tab_stops.add_tab_stop(Inches(5.5), WD_TAB_ALIGNMENT.RIGHT)
+    run_ie = p_exam.add_run("Internal Examiner")
+    run_ie.font.size = Pt(12)
+    run_ie.font.name = "Times New Roman"
+    run_tab = p_exam.add_run("\tExternal Examiner")
+    run_tab.font.size = Pt(12)
+    run_tab.font.name = "Times New Roman"
+
+    # ──────────────────────────────
+    #  SECTION 3: DECLARATION PAGE (Page Border ON, Roman Numeral: iii)
+    # ──────────────────────────────
+    sec_decl = doc.add_section(WD_SECTION_START.NEW_PAGE)
+    set_margins(sec_decl)
+    add_page_border(sec_decl)
+    add_page_number_to_footer(sec_decl)
+    set_section_page_numbering(sec_decl, fmt="lowerRoman", start=3)
+
+    # Form Number
+    add_form_number(doc)
+
+    # DECLARATION heading
+    p_decl_heading = doc.add_paragraph()
+    p_decl_heading.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p_decl_heading.paragraph_format.space_before = Pt(36)
+    p_decl_heading.paragraph_format.space_after = Pt(24)
+    run_dh = p_decl_heading.add_run("DECLARATION")
+    run_dh.bold = True
+    run_dh.font.size = Pt(15)
+    run_dh.font.name = "Times New Roman"
+
+    # Declaration body
+    p_decl_body = doc.add_paragraph()
+    p_decl_body.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    p_decl_body.paragraph_format.space_before = Pt(12)
+    p_decl_body.paragraph_format.space_after = Pt(24)
+    p_decl_body.paragraph_format.line_spacing = 1.5
+    p_decl_body.paragraph_format.first_line_indent = Cm(1.27)
+    run_db = p_decl_body.add_run(
+        'We, Mr. KARTHICK S, Mr. MIDHUN SATHISHKUMAR, and Mr. KAMESH KUMAR J, '
+        'hereby declare that the Mini Project Report entitled '
+        '\u201cAI-POWERED SMART HELMET WITH ACCIDENT PREDICTION AND EMERGENCY ALERT SYSTEM\u201d '
+        'is done by us under the guidance of our project coordinator and is submitted in partial '
+        'fulfilment of the requirements for the award of the degree in Bachelor of Technology in '
+        'Computer Science and Engineering (AI & DS).')
+    run_db.font.size = Pt(12)
+    run_db.font.name = "Times New Roman"
+
+    # DATE and PLACE
+    p_date = doc.add_paragraph()
+    p_date.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    p_date.paragraph_format.space_before = Pt(12)
+    p_date.paragraph_format.space_after = Pt(6)
+    run_date = p_date.add_run("DATE:")
+    run_date.font.size = Pt(12)
+    run_date.font.name = "Times New Roman"
+
+    p_place = doc.add_paragraph()
+    p_place.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    p_place.paragraph_format.space_before = Pt(6)
+    p_place.paragraph_format.space_after = Pt(12)
+    run_place = p_place.add_run("PLACE:")
+    run_place.bold = True
+    run_place.font.size = Pt(12)
+    run_place.font.name = "Times New Roman"
+
+    # Numbered signature lines with student details in requested format
+    student_details = [
+        ("KARTHICK S", "231191101297"),
+        ("MIDHUN SATHISHKUMAR", "Reg. No: __________"),
+        ("KAMESH KUMAR J", "Reg. No: __________")
+    ]
+    for idx, (name, reg) in enumerate(student_details, 1):
+        p_sig = doc.add_paragraph()
+        p_sig.paragraph_format.space_before = Pt(8)
+        p_sig.paragraph_format.space_after = Pt(2)
+        run_num = p_sig.add_run(f"{idx}) ")
+        run_num.font.size = Pt(12)
+        run_num.font.name = "Times New Roman"
+        
+        run_n = p_sig.add_run(name)
+        run_n.bold = True
+        run_n.font.size = Pt(12)
+        run_n.font.name = "Times New Roman"
+        
+        p_reg = doc.add_paragraph()
+        p_reg.paragraph_format.left_indent = Inches(0.25)
+        p_reg.paragraph_format.space_after = Pt(12)
+        run_reg = p_reg.add_run(reg)
+        run_reg.font.size = Pt(12)
+        run_reg.font.name = "Times New Roman"
+
+    # SIGNATURE OF THE CANDIDATES
+    p_sig_label = doc.add_paragraph()
+    p_sig_label.paragraph_format.space_before = Pt(12)
+    run_sl = p_sig_label.add_run("SIGNATURE OF THE CANDIDATES")
+    run_sl.bold = True
+    run_sl.font.size = Pt(12)
+    run_sl.font.name = "Times New Roman"
+
+    # ──────────────────────────────
+    #  SECTION 4: ACKNOWLEDGEMENT PAGE (Page Border ON, Roman Numeral: iv)
+    # ──────────────────────────────
+    sec_ack = doc.add_section(WD_SECTION_START.NEW_PAGE)
+    set_margins(sec_ack)
+    add_page_border(sec_ack)
+    add_page_number_to_footer(sec_ack)
+    set_section_page_numbering(sec_ack, fmt="lowerRoman", start=4)
+
+    # Form Number
+    add_form_number(doc)
+
+    # ACKNOWLEDGEMENT heading
+    p_ack_heading = doc.add_paragraph()
+    p_ack_heading.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p_ack_heading.paragraph_format.space_before = Pt(36)
+    p_ack_heading.paragraph_format.space_after = Pt(24)
+    run_ah = p_ack_heading.add_run("ACKNOWLEDGEMENT")
+    run_ah.bold = True
+    run_ah.font.size = Pt(15)
+    run_ah.font.name = "Times New Roman"
+
+    # Acknowledgement body (preserve existing content, use justified alignment)
+    p_ack1 = doc.add_paragraph()
+    p_ack1.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    p_ack1.paragraph_format.space_before = Pt(12)
+    p_ack1.paragraph_format.space_after = Pt(6)
+    p_ack1.paragraph_format.line_spacing = 1.5
+    p_ack1.paragraph_format.first_line_indent = Cm(1.27)
+    run_a1 = p_ack1.add_run(
         'We would like to express our sincere gratitude to our project guide and the faculty '
         'of the Department of Computer Science and Engineering (AI & DS) at Dr. M.G.R. Educational and '
         'Research Institute for their continuous support, encouragement, and valuable guidance '
         'throughout the course of this mini project.')
-    add_body(doc,
+    run_a1.font.size = Pt(12)
+    run_a1.font.name = "Times New Roman"
+
+    p_ack2 = doc.add_paragraph()
+    p_ack2.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    p_ack2.paragraph_format.space_after = Pt(6)
+    p_ack2.paragraph_format.line_spacing = 1.5
+    p_ack2.paragraph_format.first_line_indent = Cm(1.27)
+    run_a2 = p_ack2.add_run(
         'We extend our heartfelt thanks to the Head of the Department for providing us with '
         'the necessary resources and infrastructure to carry out this project successfully.')
-    add_body(doc,
+    run_a2.font.size = Pt(12)
+    run_a2.font.name = "Times New Roman"
+
+    p_ack3 = doc.add_paragraph()
+    p_ack3.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    p_ack3.paragraph_format.space_after = Pt(6)
+    p_ack3.paragraph_format.line_spacing = 1.5
+    p_ack3.paragraph_format.first_line_indent = Cm(1.27)
+    run_a3 = p_ack3.add_run(
         'We are also grateful to our friends and family for their moral support and motivation '
         'during the development of this project.')
-    add_body(doc,
+    run_a3.font.size = Pt(12)
+    run_a3.font.name = "Times New Roman"
+
+    p_ack4 = doc.add_paragraph()
+    p_ack4.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    p_ack4.paragraph_format.space_after = Pt(6)
+    p_ack4.paragraph_format.line_spacing = 1.5
+    p_ack4.paragraph_format.first_line_indent = Cm(1.27)
+    run_a4 = p_ack4.add_run(
         'Finally, we thank all the open-source communities and documentation authors whose '
         'tools, libraries, and resources made this project possible.')
+    run_a4.font.size = Pt(12)
+    run_a4.font.name = "Times New Roman"
+
     doc.add_paragraph()
     for name in ["Karthick S", "Midhun Sathishkumar", "Kamesh Kumar J"]:
         p = doc.add_paragraph()
         run = p.add_run(name)
         run.bold = True
         run.font.size = Pt(12)
+        run.font.name = "Times New Roman"
 
-    # Abstract
-    doc.add_page_break()
-    add_chapter_heading(doc, "Abstract")
-    add_body(doc,
-        'Road accidents involving two-wheeler vehicles constitute a significant proportion of global '
-        'traffic fatalities. Key contributing factors include overspeeding, riding under the influence '
-        'of alcohol, rider drowsiness, and delayed emergency medical response during the critical '
-        '"Golden Hour." Traditional helmets provide only passive physical protection and lack intelligent '
-        'features for proactive safety monitoring. '
-        'This project presents an AI-Powered Smart Helmet with Accident Prediction and Emergency Alert '
-        'System, a full-stack software prototype that demonstrates the integration of Artificial '
-        'Intelligence, Internet of Things (IoT), and Machine Learning technologies for motorcycle rider '
-        'safety. The system employs a Random Forest Classifier trained on synthetic sensor data to predict '
-        'rider conditions across three classes: Safe, At-Risk, and Danger.')
-    add_body(doc,
-        'The current prototype is a 50% Working Software Prototype that uses simulated sensor data to '
-        'demonstrate the complete system pipeline. The backend is built using Python FastAPI, which '
-        'processes sensor telemetry, executes real-time ML predictions, and manages emergency alert '
-        'dispatching. The frontend is a modern React.js web dashboard built with Vite, providing live '
-        'telemetry visualization, AI prediction panels, historical data charts, and an emergency SOS '
-        'alert card with GPS location and Google Maps integration. '
-        'The system supports five simulation modes (Safe, Risky, Drunk, Drowsy, and Crash), each '
-        'demonstrating distinct rider conditions with corresponding sensor value patterns and AI '
-        'predictions. In crash mode, the system automatically triggers an emergency SOS alert with GPS '
-        'coordinates and simulated GSM SMS dispatch to emergency contacts.')
-    add_body(doc,
-        'Real hardware integration using ESP32 microcontrollers, MPU6050 accelerometers, MQ-3 alcohol '
-        'sensors, NEO-6M GPS modules, and SIM800L GSM modules is planned as future scope to evolve this '
-        'software prototype into a complete physical product.')
-
-    p = doc.add_paragraph()
-    p.paragraph_format.space_before = Pt(12)
-    run = p.add_run('Keywords: ')
-    run.bold = True
-    run.font.size = Pt(12)
-    run.font.name = "Times New Roman"
-    run2 = p.add_run('Smart Helmet, Accident Prediction, Emergency Alert, Random Forest, IoT, '
-                     'Machine Learning, Road Safety, GPS Tracking, GSM Alert')
-    run2.italic = True
-    run2.font.size = Pt(12)
-    run2.font.name = "Times New Roman"
+    # ──────────────────────────────
+    #  SECTION 5: TOC, LOF, LOT (Page Border ON, Roman Numerals: v onwards)
+    # ──────────────────────────────
+    sec_toc = doc.add_section(WD_SECTION_START.NEW_PAGE)
+    set_margins(sec_toc)
+    add_page_border(sec_toc)
+    add_page_number_to_footer(sec_toc)
+    set_section_page_numbering(sec_toc, fmt="lowerRoman", start=5)
 
     # Table of Contents
-    doc.add_page_break()
     add_chapter_heading(doc, "Table of Contents")
 
     toc_default_pages = {
         "Certificate": "ii",
-        "Acknowledgement": "iii",
-        "Abstract": "iv",
+        "Declaration": "iii",
+        "Acknowledgement": "iv",
         "Table of Contents": "v",
         "List of Figures": "vi",
         "List of Tables": "vii",
+        "Abstract": "viii",
         "Chapter 1: Introduction": "1",
         "Chapter 2: Problem Definition": "4",
         "Chapter 3: Objective of the Project": "6",
@@ -658,7 +911,7 @@ def build_report(page_map=None):
 
     for key, def_pg in toc_default_pages.items():
         pg = page_map.get(key, def_pg)
-        bold = key.startswith("Chapter") or key in ["Certificate", "Acknowledgement", "Abstract", "Table of Contents", "List of Figures", "List of Tables"]
+        bold = key.startswith("Chapter") or key in ["Certificate", "Declaration", "Acknowledgement", "Abstract", "Table of Contents", "List of Figures", "List of Tables"]
         add_dot_leader_entry(doc, key, str(pg), bold=bold)
 
     # List of Figures
@@ -708,18 +961,61 @@ def build_report(page_map=None):
         pg = page_map.get(title, def_pg)
         add_dot_leader_entry(doc, title, str(pg), bold=False)
 
+    # Abstract (moved after List of Tables per college sample order)
+    doc.add_page_break()
+    add_chapter_heading(doc, "Abstract")
+    add_body(doc,
+        'Road accidents involving two-wheeler vehicles constitute a significant proportion of global '
+        'traffic fatalities. Key contributing factors include overspeeding, riding under the influence '
+        'of alcohol, rider drowsiness, and delayed emergency medical response during the critical '
+        '"Golden Hour." Traditional helmets provide only passive physical protection and lack intelligent '
+        'features for proactive safety monitoring. '
+        'This project presents an AI-Powered Smart Helmet with Accident Prediction and Emergency Alert '
+        'System, a full-stack software prototype that demonstrates the integration of Artificial '
+        'Intelligence, Internet of Things (IoT), and Machine Learning technologies for motorcycle rider '
+        'safety. The system employs a Random Forest Classifier trained on synthetic sensor data to predict '
+        'rider conditions across three classes: Safe, At-Risk, and Danger.')
+    add_body(doc,
+        'The current prototype is a 50% Working Software Prototype that uses simulated sensor data to '
+        'demonstrate the complete system pipeline. The backend is built using Python FastAPI, which '
+        'processes sensor telemetry, executes real-time ML predictions, and manages emergency alert '
+        'dispatching. The frontend is a modern React.js web dashboard built with Vite, providing live '
+        'telemetry visualization, AI prediction panels, historical data charts, and an emergency SOS '
+        'alert card with GPS location and Google Maps integration. '
+        'The system supports five simulation modes (Safe, Risky, Drunk, Drowsy, and Crash), each '
+        'demonstrating distinct rider conditions with corresponding sensor value patterns and AI '
+        'predictions. In crash mode, the system automatically triggers an emergency SOS alert with GPS '
+        'coordinates and simulated GSM SMS dispatch to emergency contacts.')
+    add_body(doc,
+        'Real hardware integration using ESP32 microcontrollers, MPU6050 accelerometers, MQ-3 alcohol '
+        'sensors, NEO-6M GPS modules, and SIM800L GSM modules is planned as future scope to evolve this '
+        'software prototype into a complete physical product.')
+
+    p = doc.add_paragraph()
+    p.paragraph_format.space_before = Pt(12)
+    run = p.add_run('Keywords: ')
+    run.bold = True
+    run.font.size = Pt(12)
+    run.font.name = "Times New Roman"
+    run2 = p.add_run('Smart Helmet, Accident Prediction, Emergency Alert, Random Forest, IoT, '
+                     'Machine Learning, Road Safety, GPS Tracking, GSM Alert')
+    run2.italic = True
+    run2.font.size = Pt(12)
+    run2.font.name = "Times New Roman"
+
     # ──────────────────────────────
-    #  SECTION 3: MAIN CHAPTERS & APPENDICES (Arabic Numerals starting at Page 1)
+    #  SECTION 6: MAIN CHAPTERS & APPENDICES (Arabic Numerals starting at Page 1)
     # ──────────────────────────────
-    sec3 = doc.add_section(WD_SECTION_START.NEW_PAGE)
-    set_margins(sec3)
-    add_page_number_to_footer(sec3)
-    set_section_page_numbering(sec3, fmt="decimal", start=1)  # Chapter 1 is Page 1
+    sec_main = doc.add_section(WD_SECTION_START.NEW_PAGE)
+    set_margins(sec_main)
+    add_page_border(sec_main)
+    add_page_number_to_footer(sec_main)
+    set_section_page_numbering(sec_main, fmt="decimal", start=1)  # Chapter 1 is Page 1
 
     # ═══════════════════════════════════════════════════════════════
     #  CHAPTER 1: INTRODUCTION
     # ═══════════════════════════════════════════════════════════════
-    add_chapter_heading(doc, "Chapter 1: Introduction")
+    add_split_chapter_heading(doc, "Chapter 1", "Introduction")
 
     add_sub_heading(doc, "1.1 Overview")
     add_body(doc,
@@ -803,7 +1099,7 @@ def build_report(page_map=None):
     #  CHAPTER 2: PROBLEM DEFINITION
     # ═══════════════════════════════════════════════════════════════
     doc.add_page_break()
-    add_chapter_heading(doc, "Chapter 2: Problem Definition")
+    add_split_chapter_heading(doc, "Chapter 2", "Problem Definition")
 
     add_sub_heading(doc, "2.1 Existing Problem")
     add_body(doc,
@@ -862,7 +1158,7 @@ def build_report(page_map=None):
     #  CHAPTER 3: OBJECTIVE OF THE PROJECT
     # ═══════════════════════════════════════════════════════════════
     doc.add_page_break()
-    add_chapter_heading(doc, "Chapter 3: Objective of the Project")
+    add_split_chapter_heading(doc, "Chapter 3", "Objective of the Project")
 
     add_body(doc, 'The primary objectives of this project are as follows:')
     add_bullet(doc, "To monitor rider safety using smart helmet sensor data: Design and implement a system that processes multiple sensor inputs - including speed, vibration, alcohol level, drowsiness score, 3-axis accelerometer, and 3-axis gyroscope data - to comprehensively assess the rider's condition.")
@@ -877,7 +1173,7 @@ def build_report(page_map=None):
     #  CHAPTER 4: LITERATURE SURVEY
     # ═══════════════════════════════════════════════════════════════
     doc.add_page_break()
-    add_chapter_heading(doc, "Chapter 4: Literature Survey")
+    add_split_chapter_heading(doc, "Chapter 4", "Literature Survey")
 
     add_sub_heading(doc, "4.1 Smart Helmet Systems")
     add_body(doc,
@@ -931,7 +1227,7 @@ def build_report(page_map=None):
     #  CHAPTER 5: REQUIREMENT ANALYSIS
     # ═══════════════════════════════════════════════════════════════
     doc.add_page_break()
-    add_chapter_heading(doc, "Chapter 5: Requirement Analysis")
+    add_split_chapter_heading(doc, "Chapter 5", "Requirement Analysis")
 
     add_sub_heading(doc, "5.1 Existing System")
     add_body(doc,
@@ -1029,7 +1325,7 @@ def build_report(page_map=None):
     #  CHAPTER 6: SYSTEM DESIGN
     # ═══════════════════════════════════════════════════════════════
     doc.add_page_break()
-    add_chapter_heading(doc, "Chapter 6: System Design")
+    add_split_chapter_heading(doc, "Chapter 6", "System Design")
 
     add_sub_heading(doc, "6.1 System Architecture")
     add_body(doc,
@@ -1109,7 +1405,7 @@ def build_report(page_map=None):
     #  CHAPTER 7: IMPLEMENTATION
     # ═══════════════════════════════════════════════════════════════
     doc.add_page_break()
-    add_chapter_heading(doc, "Chapter 7: Implementation")
+    add_split_chapter_heading(doc, "Chapter 7", "Implementation")
 
     add_sub_heading(doc, "7.1 Implementation Overview")
     add_body(doc,
@@ -1204,7 +1500,7 @@ def build_report(page_map=None):
     #  CHAPTER 8: MODULES DESCRIPTION
     # ═══════════════════════════════════════════════════════════════
     doc.add_page_break()
-    add_chapter_heading(doc, "Chapter 8: Modules Description")
+    add_split_chapter_heading(doc, "Chapter 8", "Modules Description")
 
     modules = [
         ("8.1 Sensor Monitoring System",
@@ -1281,7 +1577,7 @@ def build_report(page_map=None):
     #  CHAPTER 9: OUTPUT AND SCREENSHOTS
     # ═══════════════════════════════════════════════════════════════
     doc.add_page_break()
-    add_chapter_heading(doc, "Chapter 9: Output and Screenshots")
+    add_split_chapter_heading(doc, "Chapter 9", "Output and Screenshots")
 
     add_body(doc,
         'This chapter presents the output screenshots captured from the AI-Powered Smart Helmet web application, '
@@ -1357,7 +1653,7 @@ def build_report(page_map=None):
     #  CHAPTER 10: TESTING
     # ═══════════════════════════════════════════════════════════════
     doc.add_page_break()
-    add_chapter_heading(doc, "Chapter 10: Testing")
+    add_split_chapter_heading(doc, "Chapter 10", "Testing")
 
     add_sub_heading(doc, "10.1 Testing Overview")
     add_body(doc,
@@ -1394,7 +1690,7 @@ def build_report(page_map=None):
     #  CHAPTER 11: ADVANTAGES AND APPLICATIONS
     # ═══════════════════════════════════════════════════════════════
     doc.add_page_break()
-    add_chapter_heading(doc, "Chapter 11: Advantages and Applications")
+    add_split_chapter_heading(doc, "Chapter 11", "Advantages and Applications")
 
     add_sub_heading(doc, "11.1 Advantages")
     add_bullet(doc, "Improved Rider Safety: Continuous real-time monitoring of multiple rider parameters enables proactive identification of dangerous conditions.")
@@ -1416,7 +1712,7 @@ def build_report(page_map=None):
     #  CHAPTER 12: LIMITATIONS
     # ═══════════════════════════════════════════════════════════════
     doc.add_page_break()
-    add_chapter_heading(doc, "Chapter 12: Limitations")
+    add_split_chapter_heading(doc, "Chapter 12", "Limitations")
 
     add_bullet(doc, "Current version uses simulated sensor data rather than real hardware sensors.")
     add_bullet(doc, "Real sensors (MPU6050, MQ-3, SW-420, NEO-6M) are not yet connected; hardware integration is planned as future scope.")
@@ -1433,7 +1729,7 @@ def build_report(page_map=None):
     #  CHAPTER 13: FUTURE SCOPE
     # ═══════════════════════════════════════════════════════════════
     doc.add_page_break()
-    add_chapter_heading(doc, "Chapter 13: Future Scope")
+    add_split_chapter_heading(doc, "Chapter 13", "Future Scope")
 
     add_bullet(doc, "Real helmet hardware integration with embedded sensors in the helmet cavity.")
     add_bullet(doc, "ESP32/Arduino integration with firmware for sensor collection and Wi-Fi communication.")
@@ -1452,7 +1748,7 @@ def build_report(page_map=None):
     #  CHAPTER 14: CONCLUSION
     # ═══════════════════════════════════════════════════════════════
     doc.add_page_break()
-    add_chapter_heading(doc, "Chapter 14: Conclusion")
+    add_split_chapter_heading(doc, "Chapter 14", "Conclusion")
 
     add_body(doc,
         'The AI-Powered Smart Helmet with Accident Prediction and Emergency Alert System successfully '
@@ -1485,7 +1781,7 @@ def build_report(page_map=None):
     #  CHAPTER 15: REFERENCES
     # ═══════════════════════════════════════════════════════════════
     doc.add_page_break()
-    add_chapter_heading(doc, "Chapter 15: References / Bibliography")
+    add_split_chapter_heading(doc, "Chapter 15", "References / Bibliography")
 
     refs = [
         "FastAPI - Modern, Fast Web Framework for Building APIs with Python 3.7+. Official Documentation. https://fastapi.tiangolo.com/",
@@ -1518,7 +1814,7 @@ def build_report(page_map=None):
     #  APPENDIX A: BACKEND API DETAILS
     # ═══════════════════════════════════════════════════════════════
     doc.add_page_break()
-    add_chapter_heading(doc, "Appendix A: Backend API Details")
+    add_split_chapter_heading(doc, "Appendix A", "Backend API Details")
 
     add_table_caption(doc, "API Endpoints Summary")
     make_table(doc,
@@ -1540,7 +1836,7 @@ def build_report(page_map=None):
     #  APPENDIX B: IMPORTANT CODE SNIPPETS
     # ═══════════════════════════════════════════════════════════════
     doc.add_page_break()
-    add_chapter_heading(doc, "Appendix B: Important Code Snippets")
+    add_split_chapter_heading(doc, "Appendix B", "Important Code Snippets")
 
     add_sub_heading(doc, "B.1 Random Forest Model Training (model.py)")
     add_code_block(doc, 'def train_model():\n    df = generate_synthetic_data(1500)\n    X = df.drop(columns=["label"])\n    y = df["label"]\n    X_train, X_test, y_train, y_test = train_test_split(\n        X, y, test_size=0.2, random_state=42\n    )\n    model = RandomForestClassifier(\n        n_estimators=80, max_depth=8, random_state=42\n    )\n    model.fit(X_train, y_train)\n    joblib.dump(model, MODEL_PATH)\n    return model')
@@ -1558,7 +1854,7 @@ def build_report(page_map=None):
     #  APPENDIX C: RUN COMMANDS
     # ═══════════════════════════════════════════════════════════════
     doc.add_page_break()
-    add_chapter_heading(doc, "Appendix C: Run Commands")
+    add_split_chapter_heading(doc, "Appendix C", "Run Commands")
 
     add_sub_heading(doc, "C.1 Backend Setup and Run")
     add_code_block(doc, "cd backend\npython -m venv .venv\n.venv\\Scripts\\activate\npip install -r requirements.txt\nuvicorn main:app --reload --port 8080")
@@ -1572,7 +1868,7 @@ def build_report(page_map=None):
     #  APPENDIX D: DEMO FLOW
     # ═══════════════════════════════════════════════════════════════
     doc.add_page_break()
-    add_chapter_heading(doc, "Appendix D: Demo Flow")
+    add_split_chapter_heading(doc, "Appendix D", "Demo Flow")
 
     demo_steps = [
         "Open Home Page - Explain the project title, abstract, and problem definition.",
@@ -1596,7 +1892,7 @@ def build_report(page_map=None):
     #  APPENDIX E: HARDWARE COMPONENTS LIST
     # ═══════════════════════════════════════════════════════════════
     doc.add_page_break()
-    add_chapter_heading(doc, "Appendix E: Hardware Components List")
+    add_split_chapter_heading(doc, "Appendix E", "Hardware Components List")
 
     add_body(doc,
         'The following table lists the hardware components planned for future physical prototype '

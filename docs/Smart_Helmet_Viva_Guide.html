@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI-Powered Smart Helmet — Viva Preparation Guide</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      font-size: 11pt;
+      line-height: 1.6;
+      color: #1a1a2e;
+      background: #fff;
+      padding: 0;
+    }
+
+    @media print {
+      body { padding: 0; margin: 0; }
+      .page-break { page-break-before: always; }
+      .no-break { page-break-inside: avoid; }
+      @page { margin: 1.5cm 1.8cm; size: A4; }
+    }
+
+    @media screen {
+      body { max-width: 210mm; margin: 0 auto; padding: 20px 30px; background: #f0f0f5; }
+      .page-container { background: #fff; padding: 30px 40px; box-shadow: 0 2px 20px rgba(0,0,0,0.1); border-radius: 8px; margin-bottom: 20px; }
+    }
+
+    /* Cover page */
+    .cover {
+      text-align: center;
+      padding: 60px 20px 40px;
+      border-bottom: 3px solid #D71920;
+    }
+    .cover-badge {
+      display: inline-block;
+      background: #D71920;
+      color: #fff;
+      padding: 6px 18px;
+      border-radius: 20px;
+      font-size: 10pt;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .cover h1 {
+      font-size: 26pt;
+      font-weight: 800;
+      color: #0f0f23;
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+    .cover h2 {
+      font-size: 14pt;
+      font-weight: 500;
+      color: #555;
+      margin-bottom: 30px;
+    }
+    .cover-meta {
+      font-size: 10pt;
+      color: #666;
+      line-height: 2;
+    }
+    .cover-meta strong { color: #333; }
+
+    /* Section headings */
+    h2 {
+      font-size: 16pt;
+      font-weight: 800;
+      color: #D71920;
+      margin: 28px 0 12px;
+      padding-bottom: 6px;
+      border-bottom: 2px solid #eee;
+    }
+    h3 {
+      font-size: 12pt;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin: 18px 0 8px;
+    }
+    h4 {
+      font-size: 11pt;
+      font-weight: 600;
+      color: #333;
+      margin: 12px 0 6px;
+    }
+
+    p { margin-bottom: 8px; }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 16px;
+      font-size: 10pt;
+    }
+    th {
+      background: #1a1a2e;
+      color: #fff;
+      padding: 8px 10px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 9.5pt;
+    }
+    td {
+      padding: 7px 10px;
+      border-bottom: 1px solid #e5e5e5;
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: #f8f8fc; }
+
+    /* Code blocks */
+    pre {
+      background: #1a1a2e;
+      color: #e0e0e0;
+      padding: 14px 18px;
+      border-radius: 6px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 9pt;
+      line-height: 1.5;
+      overflow-x: auto;
+      margin: 10px 0 16px;
+    }
+    code {
+      background: #f0f0f5;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-family: 'Consolas', monospace;
+      font-size: 9.5pt;
+      color: #c0392b;
+    }
+
+    /* Q&A */
+    .qa {
+      margin: 12px 0;
+      padding: 12px 16px;
+      border-left: 4px solid #D71920;
+      background: #fef8f8;
+      border-radius: 0 6px 6px 0;
+    }
+    .qa-q {
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 4px;
+    }
+    .qa-a {
+      color: #333;
+      font-style: italic;
+    }
+
+    /* Highlight box */
+    .highlight-box {
+      background: linear-gradient(135deg, #fff8e6, #fff3cc);
+      border: 1px solid #D4AF37;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin: 12px 0 16px;
+    }
+    .highlight-box strong { color: #8B6914; }
+
+    /* Tip box */
+    .tip-box {
+      background: #e8f8f0;
+      border-left: 4px solid #10b981;
+      padding: 12px 16px;
+      border-radius: 0 6px 6px 0;
+      margin: 12px 0 16px;
+    }
+
+    /* Warning box */
+    .warn-box {
+      background: #fef3f3;
+      border-left: 4px solid #D71920;
+      padding: 12px 16px;
+      border-radius: 0 6px 6px 0;
+      margin: 12px 0;
+    }
+
+    /* Architecture diagram */
+    .arch-box {
+      background: #1a1a2e;
+      color: #e0e0e0;
+      padding: 18px 22px;
+      border-radius: 8px;
+      font-family: 'Consolas', monospace;
+      font-size: 8.5pt;
+      line-height: 1.45;
+      white-space: pre;
+      overflow-x: auto;
+      margin: 10px 0 16px;
+    }
+
+    /* Cheat sheet */
+    .cheat {
+      background: #1a1a2e;
+      color: #D4AF37;
+      padding: 16px 20px;
+      border-radius: 8px;
+      font-family: 'Consolas', monospace;
+      font-size: 9.5pt;
+      line-height: 1.7;
+      margin: 10px 0;
+    }
+
+    ul, ol { margin: 6px 0 12px 22px; }
+    li { margin-bottom: 4px; }
+
+    .section-num {
+      display: inline-block;
+      background: #D71920;
+      color: #fff;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 26px;
+      font-size: 10pt;
+      font-weight: 700;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 16px;
+      border-top: 2px solid #eee;
+      font-size: 9pt;
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-container">
+
+<!-- ==================== COVER PAGE ==================== -->
+<div class="cover">
+  <div class="cover-badge">College Mini Project — Viva Guide</div>
+  <h1>AI-Powered Smart Helmet</h1>
+  <h2>Accident Prediction & Emergency Alert System</h2>
+  <div class="cover-meta">
+    <strong>College:</strong> Dr. M.G.R. Educational and Research Institute<br>
+    <strong>Team:</strong> Karthick S &bull; Midhun Sathishkumar &bull; Kamesh Kumar J<br>
+    <strong>Domain:</strong> Artificial Intelligence &bull; IoT &bull; Machine Learning &bull; Road Safety<br>
+    <strong>Type:</strong> 50% Working Software Prototype with Simulated Sensor Data
+  </div>
+</div>
+
+<!-- ==================== 1. ABSTRACT ==================== -->
+<h2><span class="section-num">1</span> Project Abstract</h2>
+<div class="highlight-box">
+  <strong>Memorize this!</strong> — This project presents an <strong>AI-Powered Smart Helmet</strong> that uses simulated IoT sensor data and a <strong>Random Forest Machine Learning classifier</strong> to predict rider safety conditions in real-time. The system monitors parameters like speed, vibration, alcohol level, drowsiness, acceleration, and gyroscope data. When a crash is predicted or rider impairment (alcohol/drowsiness) is detected, the system <strong>locks the vehicle ignition</strong>, <strong>triggers alarms</strong>, and <strong>broadcasts GPS coordinates via emergency SOS SMS</strong> to rescue services and family contacts — reducing the "Golden Hour" delay.
+</div>
+
+<!-- ==================== 2. PROBLEM ==================== -->
+<h2><span class="section-num">2</span> Problem Definition</h2>
+<table>
+  <tr><th>Problem</th><th>Explanation</th></tr>
+  <tr><td><strong>Intoxicated Riding</strong></td><td>Alcohol impairs reflexes and motor control, leading to accidents</td></tr>
+  <tr><td><strong>Drowsiness / Fatigue</strong></td><td>Rider exhaustion causes micro-sleeps and swerving</td></tr>
+  <tr><td><strong>Golden Hour Delay</strong></td><td>Fatalities increase because emergency medical response is delayed — accidents happen without bystanders to report them</td></tr>
+</table>
+<p><strong>Key fact:</strong> Motorcycle riders represent a disproportionately high fraction of overall traffic fatalities globally.</p>
+
+<h3>What is the "Golden Hour"?</h3>
+<p>The <strong>Golden Hour</strong> refers to the first 60 minutes after a traumatic accident. Medical research shows that receiving treatment within this period significantly increases survival rates. Our project addresses this by <strong>automatically detecting crashes</strong> and <strong>instantly sending GPS-tagged SOS alerts</strong> — removing the dependency on bystanders.</p>
+
+<!-- ==================== 3. TECH STACK ==================== -->
+<div class="page-break"></div>
+<h2><span class="section-num">3</span> Technology Stack</h2>
+
+<h3>Backend</h3>
+<table>
+  <tr><th>Technology</th><th>Purpose</th></tr>
+  <tr><td><strong>Python</strong></td><td>Core programming language for backend</td></tr>
+  <tr><td><strong>FastAPI</strong></td><td>Modern web framework to build REST API endpoints</td></tr>
+  <tr><td><strong>Uvicorn</strong></td><td>ASGI web server that runs the FastAPI app</td></tr>
+  <tr><td><strong>scikit-learn</strong></td><td>ML library — provides Random Forest Classifier</td></tr>
+  <tr><td><strong>joblib</strong></td><td>Serializes and saves/loads the trained ML model to disk</td></tr>
+  <tr><td><strong>pandas</strong></td><td>Data manipulation for creating synthetic training datasets</td></tr>
+  <tr><td><strong>numpy</strong></td><td>Numerical computing for feature arrays and random generation</td></tr>
+</table>
+
+<h3>Frontend</h3>
+<table>
+  <tr><th>Technology</th><th>Purpose</th></tr>
+  <tr><td><strong>React 19</strong></td><td>JavaScript UI library for building the interactive dashboard</td></tr>
+  <tr><td><strong>Vite</strong></td><td>Modern build tool & dev server (much faster than Webpack)</td></tr>
+  <tr><td><strong>Recharts</strong></td><td>Charting library for speed/vibration trend graphs</td></tr>
+  <tr><td><strong>Lucide-React</strong></td><td>SVG icon library for clean UI icons</td></tr>
+  <tr><td><strong>Vanilla CSS</strong></td><td>Custom dark-mode styling with glassmorphism and animations</td></tr>
+</table>
+
+<!-- ==================== 4. ARCHITECTURE ==================== -->
+<h2><span class="section-num">4</span> System Architecture</h2>
+
+<div class="arch-box">┌─────────────────────────────────────────────────┐
+│                 SMART HELMET                     │
+│                                                  │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐       │
+│  │ MPU6050  │  │  MQ-3    │  │  SW-420  │       │
+│  │Accel/Gyro│  │ Alcohol  │  │Vibration │       │
+│  └────┬─────┘  └────┬─────┘  └────┬─────┘       │
+│       │              │              │             │
+│  ┌────┴──────────────┴──────────────┴────┐       │
+│  │        ESP32 Microcontroller          │       │
+│  └──────────────┬────────────────────────┘       │
+│    NEO-6M GPS   │   SIM800L GSM                  │
+└─────────────────┼────────────────────────────────┘
+                  │ WiFi / HTTP
+                  ▼
+┌──────────────────────────────────────────────────┐
+│          FASTAPI BACKEND (Python)                 │
+│  ┌────────────────────────────────┐               │
+│  │  Random Forest ML Classifier   │               │
+│  │  10 features → 3 classes       │               │
+│  │  80 trees, max depth 8         │               │
+│  └──────────────┬─────────────────┘               │
+│  GET  /api/live-data     GET  /api/alert          │
+│  POST /api/demo-mode     POST /api/reset-alert    │
+└─────────────────┬────────────────────────────────┘
+                  │ REST API (JSON)
+                  ▼
+┌──────────────────────────────────────────────────┐
+│           REACT FRONTEND (Vite)                   │
+│  Home Page │ Live Dashboard │ Project Modules     │
+│  Sensor Cards │ Charts │ SOS Alert │ GPS Map      │
+└──────────────────────────────────────────────────┘</div>
+
+<!-- ==================== 5. ML MODEL ==================== -->
+<div class="page-break"></div>
+<h2><span class="section-num">5</span> Machine Learning Model — Deep Explanation</h2>
+
+<h3>Algorithm: Random Forest Classifier</h3>
+<p><strong>What is Random Forest?</strong> It is an <strong>ensemble learning</strong> method that builds <strong>multiple decision trees</strong> during training. Each tree is trained on a random subset of data (called <strong>bagging</strong>). The final prediction is decided by <strong>majority voting</strong> — whichever class gets the most votes wins. It prevents overfitting better than a single decision tree.</p>
+
+<h3>Model Configuration</h3>
+<table>
+  <tr><th>Parameter</th><th>Value</th><th>Meaning</th></tr>
+  <tr><td><code>n_estimators</code></td><td>80</td><td>Number of decision trees in the forest</td></tr>
+  <tr><td><code>max_depth</code></td><td>8</td><td>Maximum depth of each tree (prevents overfitting)</td></tr>
+  <tr><td><code>random_state</code></td><td>42</td><td>Seed for reproducibility</td></tr>
+  <tr><td><code>test_size</code></td><td>0.2</td><td>20% data for testing, 80% for training</td></tr>
+  <tr><td>Training samples</td><td>1500</td><td>Synthetic sensor data generated with numpy</td></tr>
+</table>
+
+<h3>10 Input Features</h3>
+<table>
+  <tr><th>#</th><th>Feature</th><th>Unit</th><th>Description</th><th>Range</th></tr>
+  <tr><td>1</td><td><code>speed</code></td><td>km/h</td><td>Vehicle speed</td><td>0–110</td></tr>
+  <tr><td>2</td><td><code>vibration</code></td><td>m/s²</td><td>Road vibration amplitude</td><td>0.2–18</td></tr>
+  <tr><td>3</td><td><code>alcohol_level</code></td><td>mg/L</td><td>Blood alcohol concentration</td><td>0.0–0.8</td></tr>
+  <tr><td>4</td><td><code>drowsy_score</code></td><td>0–1</td><td>Drowsiness / fatigue index</td><td>0.0–1.0</td></tr>
+  <tr><td>5</td><td><code>accel_x</code></td><td>G</td><td>Lateral acceleration (left/right)</td><td>-2 to 2</td></tr>
+  <tr><td>6</td><td><code>accel_y</code></td><td>G</td><td>Longitudinal acceleration (front/back)</td><td>-2 to 2</td></tr>
+  <tr><td>7</td><td><code>accel_z</code></td><td>G</td><td>Vertical acceleration (gravity ≈ 1G)</td><td>0.5–1.5</td></tr>
+  <tr><td>8</td><td><code>gyro_x</code></td><td>°/s</td><td>Pitch (front/back tilt rate)</td><td>-45 to 45</td></tr>
+  <tr><td>9</td><td><code>gyro_y</code></td><td>°/s</td><td>Roll (side swerve rate)</td><td>-45 to 45</td></tr>
+  <tr><td>10</td><td><code>gyro_z</code></td><td>°/s</td><td>Yaw (heading rotation rate)</td><td>-45 to 45</td></tr>
+</table>
+
+<h3>3 Output Classes</h3>
+<table>
+  <tr><th>Label</th><th>Class</th><th>Meaning</th></tr>
+  <tr><td>0</td><td><strong>Safe</strong></td><td>Rider is in normal safe condition</td></tr>
+  <tr><td>1</td><td><strong>At-Risk</strong></td><td>Warning — elevated speed, moderate alcohol, or unstable driving</td></tr>
+  <tr><td>2</td><td><strong>Danger</strong></td><td>Critical — crash, heavily drunk, or severely drowsy</td></tr>
+</table>
+
+<h3>Classification Rules</h3>
+<h4>🔴 DANGER conditions:</h4>
+<ul>
+  <li>Vibration > 12.0 m/s² (crash impact)</li>
+  <li>Acceleration X or Y exceeds ±3.0G (violent collision)</li>
+  <li>Speed > 40 km/h AND vibration > 8.0 (high-speed crash)</li>
+  <li>Alcohol level ≥ 0.35 mg/L (heavily intoxicated)</li>
+  <li>Drowsy score ≥ 0.75 AND speed > 50 km/h (asleep while speeding)</li>
+</ul>
+
+<h4>⚠️ AT-RISK conditions:</h4>
+<ul>
+  <li>Speed > 80 km/h (overspeeding)</li>
+  <li>Alcohol 0.15–0.35 (moderate alcohol)</li>
+  <li>Drowsy score 0.50–0.75 (moderate drowsiness)</li>
+  <li>Gyroscope X or Y > ±35°/s (unstable swerving)</li>
+</ul>
+
+<h4>✅ SAFE: All values within normal range</h4>
+
+<h3>How Prediction Works at Runtime</h3>
+<pre>
+# 1. Collect sensor readings into a feature array
+features = [speed, vibration, alcohol_level, drowsy_score,
+            accel_x, accel_y, accel_z, gyro_x, gyro_y, gyro_z]
+
+# 2. Feed into the trained model
+prediction = model.predict([features])          # Returns: 0, 1, or 2
+probabilities = model.predict_proba([features]) # Returns: [0.92, 0.05, 0.03]
+
+# 3. Map to human-readable status
+status_map = {0: "Safe", 1: "At-Risk", 2: "Danger"}
+</pre>
+
+<h3>Model Storage</h3>
+<p>The trained model is saved as <code>helmet_model.joblib</code> using the joblib library. On server startup, the model is loaded from disk (not retrained every time). If the file is missing, it auto-trains and saves a new one.</p>
+
+<!-- ==================== 6. API ==================== -->
+<div class="page-break"></div>
+<h2><span class="section-num">6</span> Backend API Endpoints</h2>
+<table>
+  <tr><th>Method</th><th>Endpoint</th><th>Purpose</th></tr>
+  <tr><td>GET</td><td><code>/api/live-data</code></td><td>Returns current sensor data, ML prediction, and last 20 history entries</td></tr>
+  <tr><td>GET</td><td><code>/api/alert</code></td><td>Returns emergency alert status (crash active?, GPS coords, GSM status)</td></tr>
+  <tr><td>POST</td><td><code>/api/demo-mode</code></td><td>Switches simulation: safe, risky, drunk, drowsy, crash</td></tr>
+  <tr><td>POST</td><td><code>/api/reset-alert</code></td><td>Clears crash notification and resets to safe mode</td></tr>
+  <tr><td>GET</td><td><code>/docs</code></td><td>Auto-generated Swagger API documentation</td></tr>
+</table>
+
+<h3>Background Simulation Thread</h3>
+<ul>
+  <li>A <strong>daemon thread</strong> runs continuously in the background</li>
+  <li>Every <strong>1 second</strong>, it generates new simulated sensor values based on the current demo mode</li>
+  <li>Passes values through the <strong>Random Forest model</strong> for prediction</li>
+  <li>Maintains a rolling <strong>history buffer of 20 readings</strong> for the charts</li>
+</ul>
+
+<h3>What is CORS?</h3>
+<p><strong>CORS (Cross-Origin Resource Sharing)</strong> is a browser security feature. Since frontend runs on <code>localhost:5173</code> and backend on <code>localhost:8080</code>, they are different "origins." Without CORS middleware, the browser would block API requests. We configure it in FastAPI to allow the frontend to communicate.</p>
+
+<!-- ==================== 7. DEMO MODES ==================== -->
+<h2><span class="section-num">7</span> Five Simulation Demo Modes</h2>
+<table>
+  <tr><th>Mode</th><th>Speed</th><th>Alcohol</th><th>Drowsy</th><th>Vibration</th><th>ML Result</th></tr>
+  <tr><td><strong>Safe</strong></td><td>30–50 km/h</td><td>0.01–0.05</td><td>0–15%</td><td>0.4–1.2</td><td>✅ Safe</td></tr>
+  <tr><td><strong>Risky</strong></td><td>85–95 km/h</td><td>0.04–0.11</td><td>15–28%</td><td>1.8–3.5</td><td>⚠️ At-Risk</td></tr>
+  <tr><td><strong>Drunk</strong></td><td>30–42 km/h</td><td>0.38–0.45</td><td>8–25%</td><td>0.8–2.2</td><td>🔴 Danger</td></tr>
+  <tr><td><strong>Drowsy</strong></td><td>52–60 km/h</td><td>0.0–0.04</td><td>82–94%</td><td>0.6–1.6</td><td>🔴 Danger</td></tr>
+  <tr><td><strong>Crash</strong></td><td>72→18→0</td><td>0.02</td><td>5%</td><td>18.7</td><td>🔴 Danger + SOS</td></tr>
+</table>
+
+<h3>Crash Sequence (3 ticks):</h3>
+<ol>
+  <li><strong>Tick 1:</strong> Riding normally at 72.4 km/h</li>
+  <li><strong>Tick 2:</strong> Sudden deceleration to 18.2 km/h, vibration spikes to 18.7, acceleration hits 5.2G — <strong>crash moment</strong></li>
+  <li><strong>Tick 3+:</strong> Speed drops to 0.0, alert becomes active → <strong>SOS SMS sent with GPS coordinates</strong></li>
+</ol>
+
+<!-- ==================== 8. HARDWARE ==================== -->
+<div class="page-break"></div>
+<h2><span class="section-num">8</span> Hardware Components (Future Scope)</h2>
+<table>
+  <tr><th>Component</th><th>Model</th><th>Purpose</th></tr>
+  <tr><td>Accelerometer/Gyroscope</td><td><strong>MPU6050</strong></td><td>Measures 3-axis acceleration (G-force) and angular velocity (°/s)</td></tr>
+  <tr><td>Alcohol Sensor</td><td><strong>MQ-3</strong></td><td>Detects ethanol vapor from rider's breath inside helmet cavity</td></tr>
+  <tr><td>Vibration Sensor</td><td><strong>SW-420</strong></td><td>Detects high-impact mechanical vibrations from collisions</td></tr>
+  <tr><td>GPS Module</td><td><strong>NEO-6M</strong></td><td>Captures latitude/longitude coordinates via satellite signals</td></tr>
+  <tr><td>GSM Module</td><td><strong>SIM800L</strong></td><td>Sends SMS over cellular network to emergency contacts</td></tr>
+  <tr><td>Buzzer</td><td><strong>Active Buzzer</strong></td><td>Sounds audible alarm inside helmet for drowsiness/alcohol warnings</td></tr>
+  <tr><td>Microcontroller</td><td><strong>ESP32</strong></td><td>Central processing unit — reads sensors, runs logic, controls modules</td></tr>
+</table>
+
+<!-- ==================== 9. MODULES ==================== -->
+<h2><span class="section-num">9</span> Project Modules (8 Modules)</h2>
+<table>
+  <tr><th>#</th><th>Module</th><th>Description</th></tr>
+  <tr><td>1</td><td><strong>Sensor Monitoring System</strong></td><td>MPU6050, MQ-3, SW-420 sensors collecting data at high frequency</td></tr>
+  <tr><td>2</td><td><strong>AI/ML Risk Prediction</strong></td><td>Random Forest classifier — 10 features, 3 output classes, 80 trees</td></tr>
+  <tr><td>3</td><td><strong>Alcohol Detection</strong></td><td>MQ-3 breath analysis, ignition lockout at BAC ≥ 0.35</td></tr>
+  <tr><td>4</td><td><strong>Drowsiness Detection</strong></td><td>Eye-closure index monitoring, buzzer alarm at ≥ 75% fatigue</td></tr>
+  <tr><td>5</td><td><strong>Crash & Impact Detection</strong></td><td>G-force + vibration spike detection for collision events</td></tr>
+  <tr><td>6</td><td><strong>GPS Location Tracking</strong></td><td>NEO-6M satellite coordinate logging for accident location</td></tr>
+  <tr><td>7</td><td><strong>GSM Emergency SMS Alert</strong></td><td>SIM800L SMS dispatch with Google Maps crash link</td></tr>
+  <tr><td>8</td><td><strong>Data Logging / Dashboard</strong></td><td>Real-time React dashboard with charts, cards, and alerts</td></tr>
+</table>
+
+<!-- ==================== 10. FRONTEND ==================== -->
+<h2><span class="section-num">10</span> Frontend Pages</h2>
+
+<h3>Page 1: Home</h3>
+<ul>
+  <li>Hero section with project title and abstract</li>
+  <li>Problem definition explanation</li>
+  <li>Core features grid (ML, Emergency Alert, Impairment Detection, GPS)</li>
+  <li>Project team section with member roles</li>
+  <li>Future hardware integration flow diagram</li>
+</ul>
+
+<h3>Page 2: Live Dashboard</h3>
+<ul>
+  <li><strong>Demo Mode Buttons:</strong> Safe, Risky, Drunk, Drowsy, Crash</li>
+  <li><strong>AI Prediction Card:</strong> Shows SAFE/AT-RISK/DANGER with confidence bars</li>
+  <li><strong>Sensor Cards:</strong> Speed, Alcohol, Drowsiness, Vibration</li>
+  <li><strong>3-Axis Accelerometer & Gyroscope:</strong> X, Y, Z values</li>
+  <li><strong>Emergency SOS Panel:</strong> Crash severity, SMS status, Google Maps link</li>
+  <li><strong>Trend Charts:</strong> Real-time speed and vibration line charts</li>
+</ul>
+
+<h3>Page 3: Project Modules</h3>
+<ul>
+  <li>Detailed breakdown of all 8 modules with technical specs</li>
+  <li>Hardware future scope section</li>
+</ul>
+
+<h3>Data Polling</h3>
+<p>Frontend polls the backend API <strong>every 1 second</strong> using <code>setInterval</code> and JavaScript <code>fetch()</code> API. New data triggers React state updates via <code>useState</code> and <code>useEffect</code> hooks, causing the UI to re-render.</p>
+
+<!-- ==================== 11. Q&A ==================== -->
+<div class="page-break"></div>
+<h2><span class="section-num">11</span> Anticipated Viva Questions & Answers</h2>
+
+<h3>General Questions</h3>
+
+<div class="qa no-break">
+  <div class="qa-q">Q1: What is the aim of your project?</div>
+  <div class="qa-a">To develop an AI-Powered Smart Helmet that uses Machine Learning to predict accidents, detect rider impairment (alcohol/drowsiness), and automatically send emergency SOS alerts with GPS location to reduce the Golden Hour delay.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="qa-q">Q2: What problem does this project solve?</div>
+  <div class="qa-a">It solves three problems: (1) detecting drunk riding and locking the ignition, (2) detecting drowsy riding and sounding alarms, and (3) detecting crashes and immediately sending SMS with GPS coordinates — eliminating dependency on bystanders.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="qa-q">Q3: Is this fully working hardware or software?</div>
+  <div class="qa-a">This is a 50% working software prototype. The complete software stack — ML model, API backend, real-time dashboard — is fully functional. The hardware integration with actual sensors is planned for the next phase.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="qa-q">Q4: Why did you choose this project?</div>
+  <div class="qa-a">Motorcycle accidents are a leading cause of road fatalities. Many deaths happen not because of the accident itself, but because emergency help arrives too late. Our project automates crash detection and emergency alerts to save lives during the Golden Hour.</div>
+</div>
+
+<h3>Machine Learning Questions</h3>
+
+<div class="qa no-break">
+  <div class="qa-q">Q5: What ML algorithm did you use and why?</div>
+  <div class="qa-a">We used Random Forest Classifier because: (1) it handles multi-class classification well, (2) it's robust against overfitting due to ensemble averaging, (3) it works well with tabular sensor data, and (4) it provides probability scores for confidence bars.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="qa-q">Q6: How many features does your model use?</div>
+  <div class="qa-a">10 features: speed, vibration, alcohol_level, drowsy_score, accel_x, accel_y, accel_z, gyro_x, gyro_y, gyro_z.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="qa-q">Q7: What are the output classes?</div>
+  <div class="qa-a">Three classes: Safe (label 0), At-Risk (label 1), and Danger (label 2).</div>
+</div>
+
+<div class="qa no-break">
+  <div class="qa-q">Q8: How did you get the training data?</div>
+  <div class="qa-a">We generated 1500 synthetic training samples using numpy random functions with realistic sensor value ranges. Labels were assigned based on expert-defined rules — for example, vibration > 12.0 = Danger, speed > 80 = At-Risk.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="qa-q">Q9: What is the accuracy of your model?</div>
+  <div class="qa-a">The model achieves high accuracy (typically >95%) on the synthetic test set. In real-world deployment, accuracy would depend on actual sensor data calibration.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="qa-q">Q10: How many decision trees are in your forest?</div>
+  <div class="qa-a">80 decision trees (n_estimators=80), each with a maximum depth of 8 (max_depth=8).</div>
+</div>
+
+<div class="qa no-break">
+  <div class="qa-q">Q11: What is overfitting? How does Random Forest prevent it?</div>
+  <div class="qa-a">Overfitting is when a model memorizes training data instead of learning general patterns. Random Forest prevents this by training multiple trees on random subsets of data (bagging) and averaging their predictions.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="qa-q">Q12: What is predict_proba?</div>
+  <div class="qa-a">It returns the probability distribution across all classes. For example, [0.92, 0.05, 0.03] means 92% Safe, 5% At-Risk, 3% Danger. We display these as confidence bars in the dashboard.</div>
+</div>
+
+<h3>Backend Questions</h3>
+
+<div class="qa no-break">
+  <div class="qa-q">Q13: Why FastAPI instead of Flask?</div>
+  <div class="qa-a">FastAPI is faster, supports async/await natively, auto-generates Swagger docs at /docs, has built-in data validation using Pydantic, and is the modern standard for Python APIs.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="qa-q">Q14: What is CORS and why do you need it?</div>
+  <div class="qa-a">CORS (Cross-Origin Resource Sharing) is a browser security feature. Since frontend runs on localhost:5173 and backend on localhost:8080, they are different origins. Without CORS middleware, the browser would block API requests.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="qa-q">Q15: How does real-time data work?</div>
+  <div class="qa-a">A background daemon thread generates new sensor values every 1 second. The frontend polls the /api/live-data endpoint every 1 second using setInterval to fetch the latest values and re-render the UI.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="qa-q">Q16: What happens when a crash is detected?</div>
+  <div class="qa-a">The system: (1) detects high vibration (18.7 m/s²) and G-force (5.2G), (2) drops speed to 0, (3) activates emergency alert with GPS coordinates, (4) simulates SOS SMS via GSM, and (5) generates a Google Maps link to the crash site.</div>
+</div>
+
+<div class="page-break"></div>
+<h3>Frontend Questions</h3>
+
+<div class="qa no-break">
+  <div class="qa-q">Q17: Why React?</div>
+  <div class="qa-a">React is component-based, making it easy to build reusable UI elements. It efficiently updates only changed parts of the DOM using its virtual DOM — perfect for our dashboard that updates every second.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="qa-q">Q18: What is Vite?</div>
+  <div class="qa-a">Vite is a modern build tool significantly faster than Webpack. It uses native ES modules and Hot Module Replacement (HMR) for instant updates during development.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="qa-q">Q19: How do the charts work?</div>
+  <div class="qa-a">We use the Recharts library to render AreaCharts. The chart displays the last 20 historical data points (rolling buffer on the backend) for speed and vibration trends.</div>
+</div>
+
+<h3>Hardware & Sensor Questions</h3>
+
+<div class="qa no-break">
+  <div class="qa-q">Q20: What is the MPU6050?</div>
+  <div class="qa-a">It's a 6-axis sensor module with a 3-axis accelerometer (measures G-force) and a 3-axis gyroscope (measures angular velocity in °/s). Used to detect crashes, falls, and unstable riding.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="qa-q">Q21: How does the MQ-3 alcohol sensor work?</div>
+  <div class="qa-a">The MQ-3 has a tin-dioxide (SnO₂) sensitive layer. When ethanol vapor contacts this layer, its electrical resistance decreases proportionally to alcohol concentration. The analog output is read by the microcontroller.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="qa-q">Q22: What is the SW-420 vibration sensor?</div>
+  <div class="qa-a">It's a high-sensitivity vibration sensor using a spring-based comparator circuit. When mechanical vibrations exceed a threshold, it outputs a digital HIGH signal — used to detect collisions.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="qa-q">Q23: How does GPS tracking work?</div>
+  <div class="qa-a">The NEO-6M GPS module receives satellite signals and outputs NMEA formatted strings with latitude and longitude. These coordinates are parsed and included in the SOS SMS.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="qa-q">Q24: What is the SIM800L?</div>
+  <div class="qa-a">It's a GSM module that sends/receives SMS using a SIM card. We use AT commands to compose and send emergency SMS containing crash location and Google Maps links.</div>
+</div>
+
+<h3>Architecture Questions</h3>
+
+<div class="qa no-break">
+  <div class="qa-q">Q25: How does the frontend communicate with the backend?</div>
+  <div class="qa-a">Using JavaScript fetch() API to make HTTP requests. GET requests retrieve sensor data, POST requests change modes. Communication uses REST API with JSON format.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="qa-q">Q26: What is the complete data flow?</div>
+  <div class="qa-a">Sensor → ESP32 reads values → Sends to FastAPI via WiFi → Backend feeds into Random Forest → Predicts Safe/At-Risk/Danger → If crash detected → Activate alert → Send SMS via SIM800L with GPS → Dashboard shows SOS card.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="qa-q">Q27: Can this work with real hardware?</div>
+  <div class="qa-a">Yes! The software architecture is designed to accept real sensor data. Only the simulation code needs to be replaced with actual ESP32 hardware I/O — the API, ML model, and dashboard work unchanged.</div>
+</div>
+
+<!-- ==================== 12. ADVANTAGES ==================== -->
+<div class="page-break"></div>
+<h2><span class="section-num">12</span> Advantages & Disadvantages</h2>
+
+<h3>Advantages</h3>
+<ol>
+  <li>Real-time accident prediction using ML reduces emergency response time</li>
+  <li>Automated SOS eliminates dependency on bystanders</li>
+  <li>Alcohol detection prevents drunk riding via ignition lockout</li>
+  <li>Drowsiness alerts prevent fatigue-related accidents</li>
+  <li>GPS-tagged alerts enable precise location for ambulances</li>
+  <li>Modular architecture — easy to integrate real hardware later</li>
+</ol>
+
+<h3>Limitations</h3>
+<ol>
+  <li>Currently uses simulated sensor data, not real hardware</li>
+  <li>ML model trained on synthetic data — real accuracy may vary</li>
+  <li>Requires internet/cellular connectivity for SMS alerts</li>
+  <li>GPS accuracy depends on satellite visibility</li>
+  <li>Battery power management needs engineering for continuous operation</li>
+</ol>
+
+<!-- ==================== 13. FUTURE ==================== -->
+<h2><span class="section-num">13</span> Future Enhancements</h2>
+<ol>
+  <li>Physical hardware prototype with ESP32 + actual sensors</li>
+  <li>Cloud deployment on AWS/GCP for remote monitoring</li>
+  <li>Companion mobile app for family members</li>
+  <li>Deep learning models (LSTM/CNN) for better temporal recognition</li>
+  <li>Integration with hospital databases for direct ambulance dispatch</li>
+  <li>Voice alerts instead of just buzzer alarms</li>
+  <li>Multi-rider fleet monitoring dashboard for delivery companies</li>
+</ol>
+
+<!-- ==================== 14. KEY TERMS ==================== -->
+<h2><span class="section-num">14</span> Key Technical Terms Glossary</h2>
+<table>
+  <tr><th>Term</th><th>Explanation</th></tr>
+  <tr><td><strong>Random Forest</strong></td><td>Ensemble ML algorithm — multiple decision trees with majority voting</td></tr>
+  <tr><td><strong>CORS</strong></td><td>Browser security policy controlling cross-domain API access</td></tr>
+  <tr><td><strong>REST API</strong></td><td>Web service style using HTTP methods (GET, POST, PUT, DELETE)</td></tr>
+  <tr><td><strong>FastAPI</strong></td><td>Modern Python web framework with auto-docs and async support</td></tr>
+  <tr><td><strong>ASGI</strong></td><td>Async Server Gateway Interface — Python server protocol</td></tr>
+  <tr><td><strong>Vite</strong></td><td>Next-gen JS build tool, faster than Webpack</td></tr>
+  <tr><td><strong>React</strong></td><td>JS library for component-based UIs with virtual DOM</td></tr>
+  <tr><td><strong>useState / useEffect</strong></td><td>React hooks for state management and side effects</td></tr>
+  <tr><td><strong>scikit-learn</strong></td><td>Python ML library with pre-built algorithms</td></tr>
+  <tr><td><strong>joblib</strong></td><td>Python library for saving/loading ML models</td></tr>
+  <tr><td><strong>Synthetic Data</strong></td><td>Artificially generated data mimicking real sensor readings</td></tr>
+  <tr><td><strong>Feature Vector</strong></td><td>Array of input values fed into an ML model</td></tr>
+  <tr><td><strong>Daemon Thread</strong></td><td>Background thread that auto-stops when main program exits</td></tr>
+  <tr><td><strong>Glassmorphism</strong></td><td>UI design trend — frosted glass effect with blur & transparency</td></tr>
+</table>
+
+<!-- ==================== 15. CHEAT SHEET ==================== -->
+<h2><span class="section-num">15</span> Quick Revision Cheat Sheet</h2>
+<div class="cheat">
+Project    = AI-Powered Smart Helmet
+ML Model   = Random Forest Classifier (80 trees, depth 8)
+Features   = 10 (speed, vibration, alcohol, drowsy, accel×3, gyro×3)
+Classes    = 3 (Safe, At-Risk, Danger)
+Training   = 1500 synthetic samples, 80/20 train-test split
+Backend    = FastAPI + Uvicorn (Python) on port 8080
+Frontend   = React + Vite (JavaScript) on port 5173
+Charts     = Recharts library
+Icons      = Lucide-React
+Sensors    = MPU6050, MQ-3, SW-420, NEO-6M GPS, SIM800L GSM
+MCU        = ESP32
+Demo Modes = Safe, Risky, Drunk, Drowsy, Crash
+Key APIs   = /api/live-data, /api/alert, /api/demo-mode, /api/reset-alert
+</div>
+
+<div class="tip-box" style="margin-top: 20px;">
+  <strong>💡 Pro tip for viva:</strong> Always start with a one-line definition, then expand with how it's used in YOUR project. Example: <em>"Random Forest is an ensemble ML algorithm using multiple decision trees. In our project, we use 80 trees with max depth 8 to classify rider state into Safe, At-Risk, or Danger based on 10 sensor features."</em>
+</div>
+
+<!-- ==================== FOOTER ==================== -->
+<div class="footer">
+  <p>AI-Powered Smart Helmet — Viva Preparation Guide</p>
+  <p>Dr. M.G.R. Educational and Research Institute &bull; Karthick S &bull; Midhun Sathishkumar &bull; Kamesh Kumar J</p>
+  <p style="margin-top: 8px;">Good luck with your viva! 🎓🏍️</p>
+</div>
+
+</div><!-- end page-container -->
+</body>
+</html>
